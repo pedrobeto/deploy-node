@@ -25,7 +25,7 @@ jobs:
         run: yarn build
       
       # Copiar pasta dist pra dentro da Digital Ocean
-      - name: copy dist to DO
+      - name: Copy dist to DO
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -35,6 +35,36 @@ jobs:
           source: ".,!node_modules"
           target: "~/app/deploy-node"
           
+      - name: Install dependencies on DO
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/deploy-node
+            yarn     
+            
+      - name: Run migrations on DO
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/app/deploy-node
+            ./node_modules/.bin/typeorm migration:run
+            
+      - name: Run migrations on DO
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_KEY }}
+          script: pm2 restart gobarber-api
 
 
     # Executar yarn na Digital Ocean
