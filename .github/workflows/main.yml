@@ -47,7 +47,8 @@ jobs:
             yarn 
             ./node_modules/.bin/typeorm migration:run
             pm2 restart gobarber-api    
-            
-    # Executar yarn na Digital Ocean
+
+
+# Executar yarn na Digital Ocean
     # Executar as migrations do TypeOrm
     # Restart no servidor Node.js
